@@ -20,7 +20,8 @@ namespace AutomationFramework
             // Set WebDriver based on browerName parameter
             if (browserName.Equals("ie"))
             {
-                driver = new InternetExplorerDriver();
+                var options = new InternetExplorerOptions{EnsureCleanSession = true};
+                driver = new InternetExplorerDriver(options);
             }
             else if (browserName.Equals("chrome"))
             {
