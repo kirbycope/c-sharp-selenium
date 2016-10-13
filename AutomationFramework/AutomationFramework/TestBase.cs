@@ -54,7 +54,7 @@ namespace AutomationFramework
             {
                 // Create an options object to specify command line arguments for the Chrome web driver
                 ChromeOptions options = new ChromeOptions();
-                // Disable extensions so the stupid popup goes away // http://stackoverflow.com/a/23132321/1106708
+                // Disable extensions
                 options.AddArgument(@"--disable-extensions");
                 // Use Remote Chrome
                 try
@@ -74,13 +74,13 @@ namespace AutomationFramework
             {
                 // Create an options object to specify command line arguments for the Chrome web driver
                 ChromeOptions options = new ChromeOptions();
-                // Use a real profile so that DRM loads // http://stackoverflow.com/questions/29479888/play-drm-content-in-chrome-driver
-                string localAppData = Environment.GetEnvironmentVariable("LocalAppData"); // http://stackoverflow.com/a/1980115/1106708
-                options.AddArgument(@"user-data-dir=" + localAppData + @"\Google\Chrome\User Data\"); // https://bugs.chromium.org/p/chromedriver/issues/detail?id=1182#c2
-                options.AddArgument(@"--profile-directory=Default"); // http://superuser.com/a/377195/476383
-                // Allow components to update (helps with DRM) // http://stackoverflow.com/a/29970602/1106708
+                // Use a real profile so that DRM loads
+                string localAppData = Environment.GetEnvironmentVariable("LocalAppData");
+                options.AddArgument(@"user-data-dir=" + localAppData + @"\Google\Chrome\User Data\");
+                options.AddArgument(@"--profile-directory=Default");
+                // Allow components to update (helps with DRM)
                 options.AddExcludedArgument(@"disable-component-update");
-                // Disable extensions so the stupid popup goes away // http://stackoverflow.com/a/23132321/1106708
+                // Disable extensions
                 options.AddArgument(@"--disable-extensions");
                 // Use Remote Chrome
                 try
@@ -122,11 +122,13 @@ namespace AutomationFramework
                 catch
                 {
                     Console.WriteLine("Unable to use remote firefox, using local instead.");
-                    try // Load Firefox From Default Location
+                    // Load Firefox From Default Location
+                    try
                     {
                         driver = new FirefoxDriver();
                     }
-                    catch // Load Firefox From Specific Location
+                    // Load Firefox From Specific Location
+                    catch
                     {
                         FirefoxBinary binary = new FirefoxBinary(@"C:\Program Files\Mozilla Firefox\firefox.exe");
                         FirefoxProfile profile = new FirefoxProfile();
