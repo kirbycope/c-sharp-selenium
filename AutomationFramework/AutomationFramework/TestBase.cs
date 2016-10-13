@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Edge;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.IE;
 using OpenQA.Selenium.Remote;
@@ -12,12 +13,18 @@ namespace AutomationFramework
 {
     public class TestBase
     {
+        #region global variables
+
         // Declare a WebDriver for the tests
         protected IWebDriver driver;
         // Define the Base URL (from the App.config)
         protected string baseUrl = ConfigurationManager.AppSettings["baseUrl"];
         // Define the  Grid Hub URI (from the App.config)
         protected Uri hubUri = new Uri(ConfigurationManager.AppSettings["hubUri"]);
+        // Define the Browsers (from the App.config)
+        protected static string browsersToRun = ConfigurationManager.AppSettings["browsers"];
+
+        #endregion global variables
 
         /// <summary>
         /// Sets up the appropriate WebDriver
@@ -25,41 +32,94 @@ namespace AutomationFramework
         /// <param name="browserName">The name of the browser the test requires</param>
         public void Setup(string browserName)
         {
+            // Set WebDriver based on browerName parameter
             if (browserName.Equals("ie"))
             {
-                try // Use Remote IE
+                // Use Remote IE
+                try
                 {
                     DesiredCapabilities capabilities = DesiredCapabilities.InternetExplorer();
+                    InternetExplorerOptions options = new InternetExplorerOptions();
+                    capabilities.SetCapability(options.EnsureCleanSession.ToString(), true);
                     driver = new RemoteWebDriver(hubUri, capabilities);
                 }
-                catch // Use local IE
+                // Use local IE
+                catch
                 {
-                    Console.WriteLine("Unable to use remote ie, using local instead.");
-                    var options = new InternetExplorerOptions { EnsureCleanSession = true };
+                    InternetExplorerOptions options = new InternetExplorerOptions();
                     driver = new InternetExplorerDriver(options);
                 }
             }
             else if (browserName.Equals("chrome"))
             {
-                try // Use Remote Chrome
+                // Create an options object to specify command line arguments for the Chrome web driver
+                ChromeOptions options = new ChromeOptions();
+                // Disable extensions so the stupid popup goes away // http://stackoverflow.com/a/23132321/1106708
+                options.AddArgument(@"--disable-extensions");
+                // Use Remote Chrome
+                try
                 {
                     DesiredCapabilities capabilities = DesiredCapabilities.Chrome();
+                    capabilities.SetCapability(ChromeOptions.Capability, options);
                     driver = new RemoteWebDriver(hubUri, capabilities);
                 }
-                catch // Use Local Chrome
+                // Use Local Chrome
+                catch
                 {
-                    Console.WriteLine("Unable to use remote chrome, using local instead.");
-                    driver = new ChromeDriver();
+                    // Create the driver with the defined options (above)
+                    driver = new ChromeDriver(options);
                 }
             }
-            else
+            else if (browserName.Equals("chromeDRM"))
             {
-                try // Use Remote Firefox
+                // Create an options object to specify command line arguments for the Chrome web driver
+                ChromeOptions options = new ChromeOptions();
+                // Use a real profile so that DRM loads // http://stackoverflow.com/questions/29479888/play-drm-content-in-chrome-driver
+                string localAppData = Environment.GetEnvironmentVariable("LocalAppData"); // http://stackoverflow.com/a/1980115/1106708
+                options.AddArgument(@"user-data-dir=" + localAppData + @"\Google\Chrome\User Data\"); // https://bugs.chromium.org/p/chromedriver/issues/detail?id=1182#c2
+                options.AddArgument(@"--profile-directory=Default"); // http://superuser.com/a/377195/476383
+                // Allow components to update (helps with DRM) // http://stackoverflow.com/a/29970602/1106708
+                options.AddExcludedArgument(@"disable-component-update");
+                // Disable extensions so the stupid popup goes away // http://stackoverflow.com/a/23132321/1106708
+                options.AddArgument(@"--disable-extensions");
+                // Use Remote Chrome
+                try
+                {
+                    DesiredCapabilities capabilities = DesiredCapabilities.Chrome();
+                    capabilities.SetCapability(ChromeOptions.Capability, options);
+                    IWebDriver driver = new RemoteWebDriver(capabilities);
+                }
+                // Use Local Chrome
+                catch
+                {
+                    // Create the driver with the defined options (above)
+                    driver = new ChromeDriver(options);
+                }
+            }
+            else if (browserName.Equals("edge"))
+            {
+                // Use Remote Edge
+                try
+                {
+                    DesiredCapabilities capabilities = DesiredCapabilities.Edge();
+                    driver = new RemoteWebDriver(hubUri, capabilities);
+                }
+                // Use Local Edge
+                catch
+                {
+                    driver = new EdgeDriver();
+                }
+            }
+            else if (browserName.Equals("firefox"))
+            {
+                // Use Remote Firefox
+                try
                 {
                     DesiredCapabilities capabilities = DesiredCapabilities.Firefox();
                     driver = new RemoteWebDriver(hubUri, capabilities);
                 }
-                catch // Use Local Firefox
+                // Use Local Firefox
+                catch
                 {
                     Console.WriteLine("Unable to use remote firefox, using local instead.");
                     try // Load Firefox From Default Location
@@ -74,9 +134,13 @@ namespace AutomationFramework
                     }
                 }
             }
+            else
+            {
+                throw new NotImplementedException(browserName + "not setup in TestBase.cs");
+            }
             // Set window to full screen
             driver.Manage().Window.Maximize();
-            // Clear all cookies
+            // Clear all cookies (not respected by IE)
             driver.Manage().Cookies.DeleteAllCookies();
             // Set max global timeout
             driver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(30));
@@ -91,22 +155,20 @@ namespace AutomationFramework
             driver.Quit();
         }
 
-        static string configBrowsers = "";
         /// <summary>
         /// Gets each browser from the App.config
         /// </summary>
         /// <returns>Each browser from the App.config</returns>
         public static IEnumerable<string> GetBrowsers()
         {
-            // If not yet retrieved, get data
-            if (configBrowsers.Length == 0)
+            // If no browsers were spcified, default to Firefox
+            if (browsersToRun.Length == 0)
             {
-                // Get the browsers from App.config. Defaults to Chrome if none are specified
-                configBrowsers = ConfigurationManager.AppSettings["browsers"] ?? "chrome";
+                browsersToRun = "firefox";
             }
-            // Split the string (by the commas) into an array
-            string[] browsers = configBrowsers.Split(',');
-            // Return each browser in the array
+            // Split the list of browsers
+            string[] browsers = browsersToRun.Split(',');
+            // Return each browser
             foreach (string browser in browsers)
             {
                 yield return browser;
