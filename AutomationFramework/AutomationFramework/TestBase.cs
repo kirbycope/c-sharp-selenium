@@ -19,10 +19,10 @@ namespace AutomationFramework
         protected IWebDriver driver;
         // Define the Base URL (from the App.config)
         protected string baseUrl = ConfigurationManager.AppSettings["baseUrl"];
-        // Define the  Grid Hub URI (from the App.config)
-        protected Uri hubUri = new Uri(ConfigurationManager.AppSettings["hubUri"]);
         // Define the Browsers (from the App.config)
         protected static string browsersToRun = ConfigurationManager.AppSettings["browsers"];
+        // Define the  Grid Hub URI (from the App.config)
+        protected Uri hubUri = new Uri(ConfigurationManager.AppSettings["hubUri"]);
 
         #endregion global variables
 
@@ -47,25 +47,25 @@ namespace AutomationFramework
                 catch
                 {
                     InternetExplorerOptions options = new InternetExplorerOptions();
+                    options.EnsureCleanSession = true;
                     driver = new InternetExplorerDriver(options);
                 }
             }
             else if (browserName.Equals("chrome"))
             {
-                // Create an options object to specify command line arguments for the Chrome web driver
-                ChromeOptions options = new ChromeOptions();
-                // Disable extensions
-                options.AddArgument(@"--disable-extensions");
                 // Use Remote Chrome
                 try
                 {
                     DesiredCapabilities capabilities = DesiredCapabilities.Chrome();
-                    capabilities.SetCapability(ChromeOptions.Capability, options);
                     driver = new RemoteWebDriver(hubUri, capabilities);
                 }
                 // Use Local Chrome
                 catch
                 {
+                    // Create an options object to specify command line arguments for the Chrome web driver
+                    ChromeOptions options = new ChromeOptions();
+                    // Disable extensions
+                    options.AddArgument(@"--disable-extensions");
                     // Create the driver with the defined options (above)
                     driver = new ChromeDriver(options);
                 }
@@ -127,7 +127,7 @@ namespace AutomationFramework
                     {
                         driver = new FirefoxDriver();
                     }
-                    // Load Firefox From Specific Location
+                    // Load Firefox From Specific Location (For Windows 10)
                     catch
                     {
                         FirefoxBinary binary = new FirefoxBinary(@"C:\Program Files\Mozilla Firefox\firefox.exe");
