@@ -1,19 +1,19 @@
 ﻿using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Edge;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.IE;
-using OpenQA.Selenium.Remote;
+using OpenQA.Selenium.Edge;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using OpenQA.Selenium.Remote;
 
 namespace AutomationFramework
 {
     public class TestBase
     {
-        #region global variables
+        #region variables
 
         // Declare a WebDriver for the tests
         protected IWebDriver driver;
@@ -24,7 +24,7 @@ namespace AutomationFramework
         // Define the  Grid Hub URI (from the App.config)
         protected Uri hubUri = new Uri(ConfigurationManager.AppSettings["hubUri"]);
 
-        #endregion global variables
+        #endregion variables
 
         /// <summary>
         /// Sets up the appropriate WebDriver
@@ -121,20 +121,25 @@ namespace AutomationFramework
                 // Use Local Firefox
                 catch
                 {
-                    Console.WriteLine("Unable to use remote firefox, using local instead.");
-                    // Load Firefox From Default Location
-                    try
+                    try // Load Firefox From Default Location
                     {
                         driver = new FirefoxDriver();
                     }
-                    // Load Firefox From Specific Location (For Windows 10)
-                    catch
+                    catch // Load Firefox From Specific Location (for Windows 10)
                     {
-                        FirefoxBinary binary = new FirefoxBinary(@"C:\Program Files\Mozilla Firefox\firefox.exe");
-                        FirefoxProfile profile = new FirefoxProfile();
-                        driver = new FirefoxDriver(binary, profile);
+                        FirefoxOptions options = new FirefoxOptions();
+                        options.BrowserExecutableLocation = @"C:\Program Files\Mozilla Firefox\firefox.exe";
+                        driver = new FirefoxDriver(options);
                     }
                 }
+            }
+            else if (browserName.Equals("safari"))
+            {
+                // Use Remote Safari
+                DesiredCapabilities capabilities = DesiredCapabilities.Safari();
+                capabilities.SetCapability(CapabilityType.BrowserName, "safari");
+                capabilities.SetCapability(CapabilityType.Platform, "MAC");
+                driver = new RemoteWebDriver(hubUri, capabilities);
             }
             else
             {
@@ -142,10 +147,13 @@ namespace AutomationFramework
             }
             // Set window to full screen
             driver.Manage().Window.Maximize();
-            // Clear all cookies (not respected by IE)
-            driver.Manage().Cookies.DeleteAllCookies();
+            // Clear all cookies (not respected by IE or Edge)
+            if ((browserName != "ie") && (browserName != "edge") && (browserName != "safari"))
+            {
+                driver.Manage().Cookies.DeleteAllCookies();
+            }
             // Set max global timeout
-            driver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(30));
+            driver.Manage().Timeouts().ImplicitlyWait(SeleniumUtils.implicitTimeout);
         }
 
         /// <summary>
@@ -154,6 +162,7 @@ namespace AutomationFramework
         [TearDown]
         public void Cleanup()
         {
+            Console.WriteLine("Test complete.");
             driver.Quit();
         }
 
@@ -163,10 +172,10 @@ namespace AutomationFramework
         /// <returns>Each browser from the App.config</returns>
         public static IEnumerable<string> GetBrowsers()
         {
-            // If no browsers were spcified, default to Firefox
+            // If no browsers were spcified, default to Chrome
             if (browsersToRun.Length == 0)
             {
-                browsersToRun = "firefox";
+                browsersToRun = "chrome";
             }
             // Split the list of browsers
             string[] browsers = browsersToRun.Split(',');
