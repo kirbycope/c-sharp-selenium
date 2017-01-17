@@ -24,8 +24,8 @@ namespace TimothyCopeCom.Tests
             Assert.ContainsText("/quality-consulting/", homePageObject.linkCallToAction.GetAttribute("href"));
             // Click the Call-to-Action element and initialize the "quality consulting page" (that we should end up on)
             QualityConsultingPageObject qualityConsultingPageObject = HomePageObject.ClickCallToAction(driver, homePageObject);
-            // Assert: We are actually on the "quality consulting" page by looking for the contact email address
-            Assert.IsDisplayed(qualityConsultingPageObject.linkEmail, "Email link not displayed on the current page.");
+            // Assert: We are actually on the "quality consulting" page by looking for the contact email address element
+            Assert.ElementExists(qualityConsultingPageObject.linkEmail, "Email link not displayed on the current page.");
         }
     }
 }
