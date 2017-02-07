@@ -102,6 +102,8 @@ namespace AutomationFramework
                 try
                 {
                     DesiredCapabilities capabilities = DesiredCapabilities.Edge();
+                    capabilities.SetCapability(CapabilityType.BrowserName, "MicrosoftEdge");
+                    capabilities.SetCapability(CapabilityType.Platform, "WINDOWS");
                     driver = new RemoteWebDriver(hubUri, capabilities);
                 }
                 // Use Local Edge

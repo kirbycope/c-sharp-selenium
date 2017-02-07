@@ -26,8 +26,8 @@ namespace AutomationFramework
             {
                 // Write result to log
                 sb.AppendLine("    [SUCCESS] Values are equal");
-                // Pass the test
-                Pass(sb.ToString());
+                // Write the log to the console
+                Console.WriteLine(sb.ToString());
             }
             else
             {
@@ -58,8 +58,8 @@ namespace AutomationFramework
             {
                 // Write result to log
                 sb.AppendLine("    [SUCCESS] Values are equal");
-                // Pass the test
-                Pass(sb.ToString());
+                // Write the log to the console
+                Console.WriteLine(sb.ToString());
             }
             else
             {
@@ -96,8 +96,8 @@ namespace AutomationFramework
             {
                 // Write result to log
                 sb.AppendLine("    [SUCCESS] Values are not equal");
-                // Pass the test
-                Pass(sb.ToString());
+                // Write the log to the console
+                Console.WriteLine(sb.ToString());
             }
         }
 
@@ -128,8 +128,8 @@ namespace AutomationFramework
             {
                 // Write result to log
                 sb.AppendLine("    [SUCCESS] Values are not equal");
-                // Pass the test
-                Pass(sb.ToString());
+                // Write the log to the console
+                Console.WriteLine(sb.ToString());
             }
         }
 
@@ -159,8 +159,8 @@ namespace AutomationFramework
             {
                 // Write result to log
                 sb.AppendLine("    [SUCCESS] Expected object is contained in the collection");
-                // Pass the test
-                Pass(sb.ToString());
+                // Write the log to the console
+                Console.WriteLine(sb.ToString());
             }
             else
             {
@@ -198,8 +198,8 @@ namespace AutomationFramework
             {
                 // Write result to log
                 sb.AppendLine("    [SUCCESS] Expected object is contained in the collection");
-                // Pass the test
-                Pass(sb.ToString());
+                // Write the log to the console
+                Console.WriteLine(sb.ToString());
             }
             else
             {
@@ -229,8 +229,8 @@ namespace AutomationFramework
             {
                 // Write result to log
                 sb.AppendLine("    [SUCCESS] Expected text is contained in acutal text");
-                // Pass the test
-                Pass(sb.ToString());
+                // Write the log to the console
+                Console.WriteLine(sb.ToString());
             }
             else
             {
@@ -261,8 +261,8 @@ namespace AutomationFramework
             {
                 // Write result to log
                 sb.AppendLine("    [SUCCESS] Expected text is contained in acutal text");
-                // Pass the test
-                Pass(sb.ToString());
+                // Write the log to the console
+                Console.WriteLine(sb.ToString());
             }
             else
             {
@@ -288,8 +288,8 @@ namespace AutomationFramework
             {
                 // Write result to log
                 sb.AppendLine("    [SUCCESS] Element is displayed");
-                // Pass the test
-                Pass(sb.ToString());
+                // Write the log to the console
+                Console.WriteLine(sb.ToString());
             }
             else
             {
@@ -316,8 +316,8 @@ namespace AutomationFramework
             {
                 // Write result to log
                 sb.AppendLine("    [SUCCESS] Element is displayed");
-                // Pass the test
-                Pass(sb.ToString());
+                // Write the log to the console
+                Console.WriteLine(sb.ToString());
             }
             else
             {
@@ -342,8 +342,8 @@ namespace AutomationFramework
             {
                 // Write result to log
                 sb.AppendLine("    [FAILURE] Condition is true");
-                // Pass the test
-                Pass(sb.ToString());
+                // Write the log to the console
+                Console.WriteLine(sb.ToString());
             }
             else
             {
@@ -369,8 +369,8 @@ namespace AutomationFramework
             {
                 // Write result to log
                 sb.AppendLine("    [FAILURE] " + failureMessage);
-                // Pass the test
-                Pass(sb.ToString());
+                // Write the log to the console
+                Console.WriteLine(sb.ToString());
             }
             else
             {
@@ -395,8 +395,8 @@ namespace AutomationFramework
             {
                 // Write result to log
                 sb.AppendLine("    [SUCCESS] Condition is true");
-                // Pass the test
-                Pass(sb.ToString());
+                // Write the log to the console
+                Console.WriteLine(sb.ToString());
             }
             else
             {
@@ -422,8 +422,8 @@ namespace AutomationFramework
             {
                 // Write result to log
                 sb.AppendLine("    [SUCCESS] Condition is true");
-                // Pass the test
-                Pass(sb.ToString());
+                // Write the log to the console
+                Console.WriteLine(sb.ToString());
             }
             else
             {
