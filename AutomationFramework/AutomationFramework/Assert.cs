@@ -274,6 +274,61 @@ namespace AutomationFramework
         }
 
         /// <summary>
+        /// Asserts that the given element exists in the DOM.
+        /// </summary>
+        /// <param name="element">The element to check</param>
+        public static void ElementExists(IWebElement element)
+        {
+            // Create a log message
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("Assert.ElementExists(element)");
+            try { sb.AppendLine("    [INFO] Element to check: " + element.GetAttribute("outerHTML")); } catch { /* do nothing */ }
+            // Handle result
+            if (element.GetAttribute("outerHTML") != null)
+            {
+                // Write result to log
+                sb.AppendLine("    [SUCCESS] Element is present");
+                // Pass the test
+                Pass(sb.ToString());
+            }
+            else
+            {
+                // Write result to log
+                sb.AppendLine("    [FAILURE] Element is not present");
+                // Fail the test
+                Fail(sb.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Asserts that the given element exists in the DOM.
+        /// </summary>
+        /// <param name="element">The element to check</param>
+        /// <param name="failureMessage">The message to write to the console if the assert fails</param>
+        public static void ElementExists(IWebElement element, string failureMessage)
+        {
+            // Create a log message
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("Assert.ElementExists(element)");
+            try { sb.AppendLine("    [INFO] Element to check: " + element.GetAttribute("outerHTML")); } catch { /* do nothing */ }
+            // Handle result
+            if (element.GetAttribute("outerHTML") != null)
+            {
+                // Write result to log
+                sb.AppendLine("    [SUCCESS] Element is present");
+                // Pass the test
+                Pass(sb.ToString());
+            }
+            else
+            {
+                // Write result to log
+                sb.AppendLine("    [FAILURE] " + failureMessage);
+                // Fail the test
+                Fail(sb.ToString());
+            }
+        }
+
+        /// <summary>
         /// Asserts that the given element is Displayed (as defined by OpenQA.Selenium).
         /// </summary>
         /// <param name="element">The element to check</param>
@@ -445,8 +500,6 @@ namespace AutomationFramework
             // Throw an exception (failing the test)
             throw new Exception(message);
         }
-
-        // TODO: Assert.Ignore
 
         /// <summary>
         /// Passes a test by writing the result to the console not throwing an expection

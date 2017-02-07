@@ -1,5 +1,4 @@
-﻿using NUnit.Framework;
-using OpenQA.Selenium;
+﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using System;
 using System.Configuration;
@@ -123,6 +122,45 @@ namespace AutomationFramework
         }
 
         /// <summary>
+        /// Enters the given text into the given element.
+        /// </summary>
+        /// <param name="driver">The current Test's WebDriver</param>
+        /// <param name="element">The element to send keystrokes to</param>
+        /// <param name="text">The text to input</param>
+        public static void InputText(IWebDriver driver, IWebElement element, string text)
+        {
+            // Explicitly wait for the element to exist if implicit wait is not set
+            WaitForElementToExist(driver, element);
+            // Create a log message
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("SeleniumUtils.InputText(driver, element, text)");
+            try { sb.AppendLine("    [INFO] Element to click: " + element.GetAttribute("outerHTML")); } catch { /* do nothing */ }
+            sb.AppendLine("    [INFO] Text to type: " + text);
+            try
+            {
+                // Clear the input of any existing data
+                element.Clear();
+                // Send the keystrokes to the input
+                element.SendKeys(text);
+            }
+            catch (Exception e)
+            {
+                // Take screenshot of current page
+                string fileName = TakeScreenshot(driver);
+                // Add result to log message
+                sb.AppendLine("    [ERROR] Exception: " + e.Message);
+                sb.AppendLine("    [DEBUG] Screenshot: " + fileName);
+                // Fail current Test
+                Assert.Fail(sb.ToString());
+            }
+            finally
+            {
+                // Write log message to console
+                Console.WriteLine(sb.ToString());
+            }
+        }
+
+        /// <summary>
         /// Navigates to the given URL.
         /// </summary>
         /// <remarks>
@@ -137,7 +175,7 @@ namespace AutomationFramework
         /// Source - https://github.com/SeleniumHQ/selenium/blob/master/dotnet/src/webdriver/IWebDriver.cs
         /// </remarks>
         /// <param name="driver">The current Test's WebDriver</param>
-        /// <param name="url">The URL to navigate to</param>
+        /// <param name="element">The element to click</param>
         public static void NavigateToUrl(IWebDriver driver, string url)
         {
             // Create a log message
@@ -167,7 +205,7 @@ namespace AutomationFramework
                 Console.WriteLine(sb.ToString());
             }
         }
-
+        
         #endregion public methods (used as test steps)
     }
 }
